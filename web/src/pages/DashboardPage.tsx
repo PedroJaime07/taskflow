@@ -1,7 +1,31 @@
-import { useAuth } from '../contexts/AuthContext'
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { WorkspaceProps } from "../types/workspaces.types";
+import { CreateWorkspaceModal } from "../components/ModalWorkspace";
 
 export function DashboardPage() {
-  const { user, signOut } = useAuth()
+  const { user, signOut } = useAuth();
+  const [workspace, setWorkspace] = useState<WorkspaceProps[]>([]);
+  const [newWorkspace, setNewWorkspace] = useState(false);
+
+  const getWorkspaces = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3333/api/workspaces", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("@taskflow:token")}`,
+        },
+      });
+      setWorkspace(data);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getWorkspaces();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -19,11 +43,39 @@ export function DashboardPage() {
       </header>
 
       <main className="max-w-5xl mx-auto p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Meus Workspaces
-        </h2>
-        <p className="text-gray-500 text-sm">Nenhum workspace ainda.</p>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Meus Workspaces
+          </h2>
+          <button
+            onClick={() => setNewWorkspace(true)}
+            className="px-3 py-1 p-4 bg-white rounded-xl shadow-sm border rounded-lg hover:bg-gray-200 transition"
+          >
+            +
+          </button>
+          {newWorkspace && (
+            <CreateWorkspaceModal
+              onClose={() => {
+                setNewWorkspace(false);
+                getWorkspaces();
+              }}
+            />
+          )}
+        </div>
+
+        {workspace.length > 0 ? (
+          workspace.map((element) => (
+            <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition">
+              <span className="text-gray-800 font-medium">{element.name}</span>
+              <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                {element._count.projects}
+              </span>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 text-sm">Nenhum workspace ainda.</p>
+        )}
       </main>
     </div>
-  )
+  );
 }
