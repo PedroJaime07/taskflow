@@ -8,17 +8,14 @@ export const CreateWorkspaceModal = ({ onClose }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const { data } = await api.post(
-        "http://localhost:3333/api/workspaces",
-        {
-          name,
-          slug,
-        }
-      );
+       await api.post("/workspaces", {
+        name,
+        slug,
+      });
       alert("Novo Workspace cadastrado");
       onClose();
     } catch (err) {
-      console.log("Erro ao cadastrar", err);
+      alert("Erro ao cadastrar");
     }
   };
 
