@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useState } from "react";
+import { api } from "../../services/api";
 
 export const CreateWorkspaceModal = ({ onClose }: any) => {
   const [name, setName] = useState<string>("");
@@ -8,17 +8,12 @@ export const CreateWorkspaceModal = ({ onClose }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
+      const { data } = await api.post(
         "http://localhost:3333/api/workspaces",
         {
           name,
           slug,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("@taskflow:token")}`,
-          },
-        },
+        }
       );
       alert("Novo Workspace cadastrado");
       onClose();

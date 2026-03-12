@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { WorkspaceProps } from "../types/workspaces.types";
 import { CreateWorkspaceModal } from "../components/ModalWorkspace";
+import { api } from "../services/api";
 
 export function DashboardPage() {
   const { user, signOut } = useAuth();
@@ -11,15 +11,10 @@ export function DashboardPage() {
 
   const getWorkspaces = async () => {
     try {
-      const { data } = await axios.get("http://localhost:3333/api/workspaces", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("@taskflow:token")}`,
-        },
-      });
+      const { data } = await api.get<WorkspaceProps[]>('/workspaces');
       setWorkspace(data);
-      console.log(data);
     } catch (err) {
-      console.log(err);
+      alert("Erro ao buscar Workspace");
     }
   };
 
@@ -65,7 +60,7 @@ export function DashboardPage() {
 
         {workspace.length > 0 ? (
           workspace.map((element) => (
-            <div className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition">
+            <div key={element.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition">
               <span className="text-gray-800 font-medium">{element.name}</span>
               <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
                 {element._count.projects}
