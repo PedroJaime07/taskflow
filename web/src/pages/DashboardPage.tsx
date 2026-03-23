@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { WorkspaceProps } from "../types/workspaces.types";
 import { CreateWorkspaceModal } from "../components/ModalWorkspace";
 import { api } from "../services/api";
+import { Link } from "react-router-dom";
 
 export function DashboardPage() {
   const { user, signOut } = useAuth();
@@ -11,7 +12,7 @@ export function DashboardPage() {
 
   const getWorkspaces = async () => {
     try {
-      const { data } = await api.get<WorkspaceProps[]>('/workspaces');
+      const { data } = await api.get<WorkspaceProps[]>("/workspaces");
       setWorkspace(data);
     } catch (err) {
       alert("Erro ao buscar Workspace");
@@ -58,18 +59,27 @@ export function DashboardPage() {
           )}
         </div>
 
-        {workspace.length > 0 ? (
-          workspace.map((element) => (
-            <div key={element.id} className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition">
-              <span className="text-gray-800 font-medium">{element.name}</span>
-              <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                {element._count.projects}
-              </span>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-sm">Nenhum workspace ainda.</p>
-        )}
+        <div className="flex flex-col gap-4">
+          {workspace.length > 0 ? (
+            workspace.map((element) => (
+              <Link to={`/workspaces/${element.slug}`}>
+                <div
+                  key={element.id}
+                  className="cursor-pointer flex items-center justify-between p-4  bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition"
+                >
+                  <span className="text-gray-800 font-medium">
+                    {element.name}
+                  </span>
+                  <span className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    {element._count.projects}
+                  </span>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm">Nenhum workspace ainda.</p>
+          )}
+        </div>
       </main>
     </div>
   );
