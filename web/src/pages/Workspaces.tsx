@@ -62,7 +62,6 @@ export function WorkspacePage() {
             {workspaceDetails && (
               <div>
                 <CardWorkspace
-                  key={workspaceDetails.id}
                   workspace={workspaceDetails}
                   projects={workspaceProject}
                 ></CardWorkspace>
