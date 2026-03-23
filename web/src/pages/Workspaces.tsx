@@ -3,6 +3,7 @@ import { WorkspaceProps } from "../types/workspaces.types";
 import { api } from "../services/api";
 import { useEffect, useState } from "react";
 import { CardWorkspace } from "../components/Card";
+import { ProjectsProps } from "../types/projects.types";
 
 export function WorkspacePage() {
   const navigate = useNavigate();
@@ -14,22 +15,24 @@ export function WorkspacePage() {
     try {
       const { data } = await api.get<WorkspaceProps>(`/workspaces/${slug}`);
       setWorkspaceDetails(data);
-      getWorkspaceProjects(data.id)
+      getWorkspaceProjects(data.id);
     } catch (err) {
       alert("Erro ao buscar Workspace");
     }
   };
 
-const [workspaceProject, setWorkspaceProject] = useState<WorkspaceProps>()
+  const [workspaceProject, setWorkspaceProject] = useState<ProjectsProps[]>([]);
 
-const getWorkspaceProjects = async (workspaceId: string) => {
-  try {
-    const {data} = await api.get<WorkspaceProps>(`workspaces/${workspaceId}/projects`)
-    setWorkspaceProject(data)
-  }catch(err) {
-    alert('Erro ao buscar projeto')
-  }
-}
+  const getWorkspaceProjects = async (workspaceId: string) => {
+    try {
+      const { data } = await api.get<ProjectsProps[]>(
+        `/workspaces/${workspaceId}/projects`,
+      );
+      setWorkspaceProject(data);
+    } catch (err) {
+      alert("Erro ao buscar projeto");
+    }
+  };
 
   useEffect(() => {
     getWorkspacesDetail();
@@ -58,8 +61,11 @@ const getWorkspaceProjects = async (workspaceId: string) => {
           <div>
             {workspaceDetails && (
               <div>
-                <CardWorkspace key={workspaceDetails.id} workspace={workspaceDetails}></CardWorkspace>
-
+                <CardWorkspace
+                  key={workspaceDetails.id}
+                  workspace={workspaceDetails}
+                  projects={workspaceProject}
+                ></CardWorkspace>
               </div>
             )}
           </div>
