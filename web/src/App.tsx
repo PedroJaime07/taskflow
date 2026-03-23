@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { WorkspacePage } from './pages/Workspaces'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
@@ -53,6 +54,15 @@ export function App() {
             element={
               <PrivateRoute>
                 <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/workspaces/:slug"
+            element={
+              <PrivateRoute>
+                <WorkspacePage />
               </PrivateRoute>
             }
           />
